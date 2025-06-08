@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindBoost - Live Compass</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            overflow-x: hidden;
+            transition: all 0.3s ease;
+            width: 100%;
+            height: 100vh;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            padding: 10px 18px;
+            border-radius: 25px;
+            color: white;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+
+        .welcome-screen {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s ease;
+            padding: 20px;
+        }
+
+        /* DARK THEME */
+        .dark-theme {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #ffffff;
+        }
+
+        .dark-theme .welcome-container {
+            color: #ffffff;
+        }
+
+        .dark-theme .compass-circle {
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .dark-theme .compass-needle {
+            background: linear-gradient(to top, #ff6b6b, #4ecdc4);
+            box-shadow: 0 0 15px rgba(78, 205, 196, 0.6);
+        }
+
+        .dark-theme .compass-center {
+            background: #ffffff;
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.8);
+        }
+
+        .dark-theme .compass-point {
+            background: rgba(255, 255, 255, 0.7);
+        }
+
+        .dark-theme .floating-element {
+            border-color: rgba(255, 255, 255, 0.15);
+            opacity: 0.1;
+        }
+
+        .dark-theme .glow-effect {
+            background: radial-gradient(circle, rgba(78, 205, 196, 0.2) 0%, transparent 70%);
+        }
+
+        .dark-theme .cta-button {
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            box-shadow: 0 4px 15px rgba(78, 205, 196, 0.4);
+        }
+
+        .dark-theme .cta-button:hover {
+            box-shadow: 0 6px 20px rgba(78, 205, 196, 0.6);
+        }
+
+        /* LIGHT THEME */
+        .light-theme {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 75%, #f5576c 100%);
+            color: #2c3e50;
+        }
+
+        .light-theme .welcome-container {
+            color: #ffffff;
+        }
+
+        .light-theme .compass-circle {
+            border: 3px solid rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(25px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .light-theme .compass-needle {
+            background: linear-gradient(to top, #ff6b6b, #4ecdc4);
+            box-shadow: 0 0 20px rgba(78, 205, 196, 0.7);
+        }
+
+        .light-theme .compass-center {
+            background: #ffffff;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 1);
+        }
+
+        .light-theme .compass-point {
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .light-theme .floating-element {
+            border-color: rgba(255, 255, 255, 0.3);
+            opacity: 0.15;
+        }
+
+        .light-theme .glow-effect {
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+        }
+
+        .light-theme .cta-button {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            box-shadow: 0 4px 15px rgba(238, 90, 36, 0.4);
+        }
+
+        .light-theme .cta-button:hover {
+            box-shadow: 0 6px 20px rgba(238, 90, 36, 0.6);
+        }
+
+        .welcome-container {
+            text-align: center;
+            position: relative;
+            z-index: 10;
+            max-width: 400px;
+        }
+
+        .logo-container {
+            position: relative;
+            margin-bottom: 2rem;
+            display: inline-block;
+        }
+
+        .compass-circle {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            position: relative;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pulse 4s ease-in-out infinite;
+            transition: all 0.5s ease;
+        }
+
+        .compass-inner {
+            width: 140px;
+            height: 140px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .compass-needle {
+            width: 5px;
+            height: 90px;
+            border-radius: 3px;
+            position: absolute;
+            transform-origin: center bottom;
+            animation: rotate 12s linear infinite;
+            transition: all 0.5s ease;
+        }
+
+        .compass-center {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            position: absolute;
+            z-index: 5;
+            transition: all 0.5s ease;
+        }
+
+        .compass-points {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .compass-point {
+            position: absolute;
+            width: 3px;
+            height: 18px;
+            border-radius: 2px;
+            transition: all 0.5s ease;
+        }
+
+        .compass-point:nth-child(1) { top: -9px; left: 50%; transform: translateX(-50%); }
+        .compass-point:nth-child(2) { right: -9px; top: 50%; transform: translateY(-50%) rotate(90deg); }
+        .compass-point:nth-child(3) { bottom: -9px; left: 50%; transform: translateX(-50%) rotate(180deg); }
+        .compass-point:nth-child(4) { left: -9px; top: 50%; transform: translateY(-50%) rotate(270deg); }
+
+        .app-title {
+            font-size: 3.2rem;
+            font-weight: 800;
+            margin: 0.5rem 0;
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            letter-spacing: -2px;
+            background: linear-gradient(45deg, #ffffff, #f0f0f0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .app-subtitle {
+            font-size: 1.4rem;
+            font-weight: 300;
+            margin: 0 0 1rem 0;
+            opacity: 0.95;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .tagline {
+            font-size: 1.1rem;
+            margin: 2rem 0;
+            opacity: 0.9;
+            max-width: 350px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            font-weight: 400;
+        }
+
+        .features {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+
+        .feature {
+            text-align: center;
+            opacity: 0.8;
+        }
+
+        .feature-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-text {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        /* CTA Button for Adalo Navigation */
+        .cta-button {
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+        }
+
+        .floating-elements {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .floating-element {
+            position: absolute;
+            animation: float 25s linear infinite;
+            transition: all 0.5s ease;
+        }
+
+        .brain-wave {
+            width: 50px;
+            height: 50px;
+            border: 2px solid;
+            border-radius: 50% 15px 50% 15px;
+        }
+
+        .balance-symbol {
+            width: 40px;
+            height: 40px;
+            border: 2px solid;
+            border-radius: 50%;
+            position: relative;
+        }
+
+        .balance-symbol::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60%;
+            height: 2px;
+            background: currentColor;
+        }
+
+        .glow-effect {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: glow 6s ease-in-out infinite alternate;
+            transition: all 0.5s ease;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+        }
+
+        @keyframes glow {
+            0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.3; }
+            100% { transform: translate(-50%, -50%) scale(1.3); opacity: 0.1; }
+        }
+
+        @media (max-width: 768px) {
+            .app-title { font-size: 2.5rem; }
+            .app-subtitle { font-size: 1.2rem; }
+            .tagline { font-size: 1rem; max-width: 300px; }
+            .compass-circle { width: 160px; height: 160px; }
+            .compass-inner { width: 110px; height: 110px; }
+            .compass-needle { height: 70px; }
+            .features { gap: 1rem; }
+            .theme-toggle { top: 10px; right: 10px; padding: 8px 15px; font-size: 0.8rem; }
+            .cta-button { padding: 12px 30px; font-size: 1rem; }
+        }
+
+        @media (max-width: 480px) {
+            .welcome-container { max-width: 320px; }
+            .app-title { font-size: 2rem; }
+            .app-subtitle { font-size: 1rem; letter-spacing: 2px; }
+            .tagline { font-size: 0.9rem; }
+            .compass-circle { width: 140px; height: 140px; }
+            .compass-inner { width: 90px; height: 90px; }
+            .compass-needle { height: 60px; }
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" onclick="toggleTheme()">🌙 Switch Theme</button>
+    
+    <div class="welcome-screen dark-theme" id="welcomeScreen">
+        <div class="floating-elements">
+            <div class="floating-element brain-wave" style="left: 5%; animation-delay: 0s;"></div>
+            <div class="floating-element balance-symbol" style="left: 85%; animation-delay: 8s;"></div>
+            <div class="floating-element brain-wave" style="left: 70%; animation-delay: 16s;"></div>
+            <div class="floating-element balance-symbol" style="left: 25%; animation-delay: 24s;"></div>
+            <div class="floating-element brain-wave" style="left: 50%; animation-delay: 12s;"></div>
+        </div>
+        
+        <div class="glow-effect"></div>
+        
+        <div class="welcome-container">
+            <div class="logo-container">
+                <div class="compass-circle">
+                    <div class="compass-inner">
+                        <div class="compass-points">
+                            <div class="compass-point"></div>
+                            <div class="compass-point"></div>
+                            <div class="compass-point"></div>
+                            <div class="compass-point"></div>
+                        </div>
+                        <div class="compass-needle"></div>
+                        <div class="compass-center"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <h1 class="app-title">MindBoost</h1>
+            <h2 class="app-subtitle">Live Compass</h2>
+            <p class="tagline">Navigate Your Mind • Balance Your Emotions • Boost Your Mental Strength</p>
+            
+            <div class="features">
+                <div class="feature">
+                    <div class="feature-icon">🧠</div>
+                    <div class="feature-text">Mind Training</div>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">⚖️</div>
+                    <div class="feature-text">Emotional Balance</div>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🎯</div>
+                    <div class="feature-text">Live Guidance</div>
+                </div>
+            </div>
+
+            <!-- CTA Button for Adalo Navigation -->
+            <button class="cta-button" onclick="navigateToNextScreen()">
+                Get Started
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let isDarkTheme = true;
+        
+        function toggleTheme() {
+            const screen = document.getElementById('welcomeScreen');
+            const button = document.querySelector('.theme-toggle');
+            
+            if (isDarkTheme) {
+                screen.className = 'welcome-screen light-theme';
+                button.innerHTML = '🌞 Switch Theme';
+                isDarkTheme = false;
+                // Save preference (works in regular browsers, not Adalo)
+                if (typeof(Storage) !== "undefined") {
+                    localStorage.setItem('mindboost-theme', 'light');
+                }
+            } else {
+                screen.className = 'welcome-screen dark-theme';
+                button.innerHTML = '🌙 Switch Theme';
+                isDarkTheme = true;
+                if (typeof(Storage) !== "undefined") {
+                    localStorage.setItem('mindboost-theme', 'dark');
+                }
+            }
+        }
+
+        // Function for Adalo navigation
+        function navigateToNextScreen() {
+            // Replace this with your Adalo screen name
+            if (window.parent && window.parent.postMessage) {
+                // For Adalo Web View navigation
+                window.parent.postMessage({
+                    type: 'navigate',
+                    screen: 'MainScreen' // Change this to your actual screen name
+                }, '*');
+            } else {
+                // Fallback for testing
+                alert('Navigation to main screen - this will work in Adalo');
+            }
+        }
+
+        // Load saved theme on startup
+        window.addEventListener('load', function() {
+            if (typeof(Storage) !== "undefined") {
+                const savedTheme = localStorage.getItem('mindboost-theme');
+                if (savedTheme === 'light') {
+                    toggleTheme();
+                }
+            }
+        });
+
+        // Optional: Auto theme switch demo (comment out for production)
+        // setInterval(toggleTheme, 10000);
+    </script>
+</body>
+</html>
