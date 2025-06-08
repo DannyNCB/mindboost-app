@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - MindBoost</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            overflow-x: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            color: white;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+
+        .signup-screen {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s ease;
+            padding: 20px;
+        }
+
+        /* DARK THEME */
+        .dark-theme {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #ffffff;
+        }
+
+        .dark-theme .signup-container {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+        }
+
+        .dark-theme .form-input {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+        }
+
+        .dark-theme .form-input:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: #4ecdc4;
+            box-shadow: 0 0 20px rgba(78, 205, 196, 0.3);
+        }
+
+        .dark-theme .form-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .dark-theme .signup-btn {
+            background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+            color: white;
+            box-shadow: 0 8px 25px rgba(78, 205, 196, 0.4);
+        }
+
+        .dark-theme .signup-btn:hover {
+            background: linear-gradient(135deg, #5dd5cd 0%, #4fb3a0 100%);
+            box-shadow: 0 12px 35px rgba(78, 205, 196, 0.6);
+        }
+
+        .dark-theme .divider::before {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .dark-theme .social-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+        }
+
+        .dark-theme .social-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .dark-theme .login-link {
+            color: #4ecdc4;
+        }
+
+        .dark-theme .floating-element {
+            border-color: rgba(255, 255, 255, 0.1);
+            opacity: 0.08;
+        }
+
+        /* LIGHT THEME */
+        .light-theme {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 75%, #f5576c 100%);
+            color: #2c3e50;
+        }
+
+        .light-theme .signup-container {
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            color: #2c3e50;
+        }
+
+        .light-theme .form-input {
+            background: rgba(255, 255, 255, 0.8);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            color: #2c3e50;
+        }
+
+        .light-theme .form-input:focus {
+            background: rgba(255, 255, 255, 1);
+            border-color: #667eea;
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .light-theme .form-input::placeholder {
+            color: rgba(44, 62, 80, 0.6);
+        }
+
+        .light-theme .signup-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .light-theme .signup-btn:hover {
+            background: linear-gradient(135deg, #7c8bef 0%, #8a5bb5 100%);
+            box-shadow: 0 12px 35px rgba(102, 126, 234, 0.6);
+        }
+
+        .light-theme .divider::before {
+            background: rgba(44, 62, 80, 0.2);
+        }
+
+        .light-theme .social-btn {
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            color: #2c3e50;
+        }
+
+        .light-theme .social-btn:hover {
+            background: rgba(255, 255, 255, 1);
+            border-color: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .light-theme .login-link {
+            color: #667eea;
+        }
+
+        .light-theme .floating-element {
+            border-color: rgba(255, 255, 255, 0.3);
+            opacity: 0.12;
+        }
+
+        .signup-container {
+            max-width: 420px;
+            width: 100%;
+            padding: 3rem 2.5rem;
+            border-radius: 24px;
+            backdrop-filter: blur(25px);
+            position: relative;
+            z-index: 10;
+            transition: all 0.5s ease;
+        }
+
+        .logo-mini {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .compass-mini {
+            width: 60px;
+            height: 60px;
+            border: 2px solid rgba(78, 205, 196, 0.6);
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            animation: spin 8s linear infinite;
+        }
+
+        .compass-mini::before {
+            content: '';
+            width: 3px;
+            height: 30px;
+            background: linear-gradient(to top, #ff6b6b, #4ecdc4);
+            border-radius: 2px;
+            position: absolute;
+        }
+
+        .app-title-mini {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 0;
+            text-align: center;
+        }
+
+        .signup-title {
+            font-size: 2rem;
+            font-weight: 600;
+            text-align: center;
+            margin: 2rem 0 0.5rem 0;
+        }
+
+        .signup-subtitle {
+            text-align: center;
+            opacity: 0.8;
+            margin-bottom: 2rem;
+            font-size: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            border-radius: 16px;
+            border: none;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .form-input:focus {
+            transform: translateY(-2px);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .checkbox {
+            width: 18px;
+            height: 18px;
+            margin-top: 2px;
+            cursor: pointer;
+        }
+
+        .signup-btn {
+            width: 100%;
+            padding: 1.2rem;
+            border: none;
+            border-radius: 16px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+        }
+
+        .signup-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .signup-btn:active {
+            transform: translateY(0);
+        }
+
+        .divider {
+            text-align: center;
+            position: relative;
+            margin: 2rem 0;
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            z-index: -1;
+        }
+
+        .divider span {
+            background: inherit;
+            padding: 0 1rem;
+        }
+
+        .social-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .social-btn {
+            flex: 1;
+            padding: 1rem;
+            border-radius: 16px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .social-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .login-link-container {
+            text-align: center;
+            font-size: 0.95rem;
+        }
+
+        .login-link {
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .login-link:hover {
+            text-decoration: underline;
+        }
+
+        .floating-elements {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .floating-element {
+            position: absolute;
+            animation: float 20s linear infinite;
+            transition: all 0.5s ease;
+        }
+
+        .brain-wave {
+            width: 40px;
+            height: 40px;
+            border: 2px solid;
+            border-radius: 50% 10px 50% 10px;
+        }
+
+        .balance-symbol {
+            width: 30px;
+            height: 30px;
+            border: 2px solid;
+            border-radius: 50%;
+            position: relative;
+        }
+
+        .balance-symbol::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60%;
+            height: 2px;
+            background: currentColor;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+        }
+
+        @media (max-width: 768px) {
+            .signup-container {
+                padding: 2rem 1.5rem;
+                margin: 10px;
+            }
+            
+            .signup-title {
+                font-size: 1.7rem;
+            }
+            
+            .social-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" onclick="toggleTheme()">🌙 Switch Theme</button>
+    
+    <div class="signup-screen dark-theme" id="signupScreen">
+        <div class="floating-elements">
+            <div class="floating-element brain-wave" style="left: 10%; animation-delay: 0s;"></div>
+            <div class="floating-element balance-symbol" style="left: 80%; animation-delay: 5s;"></div>
+            <div class="floating-element brain-wave" style="left: 60%; animation-delay: 10s;"></div>
+            <div class="floating-element balance-symbol" style="left: 30%; animation-delay: 15s;"></div>
+        </div>
+        
+        <div class="signup-container">
+            <div class="logo-mini">
+                <div class="compass-mini"></div>
+                <h1 class="app-title-mini">MindBoost</h1>
+            </div>
+            
+            <h2 class="signup-title">Create Account</h2>
+            <p class="signup-subtitle">Start your journey to mental wellness</p>
+            
+            <form onsubmit="handleSignup(event)">
+                <div class="form-group">
+                    <input type="text" class="form-input" placeholder="Full Name" required>
+                </div>
+                
+                <div class="form-group">
+                    <input type="email" class="form-input" placeholder="Email Address" required>
+                </div>
+                
+                <div class="form-group">
+                    <input type="password" class="form-input" placeholder="Password" required>
+                </div>
+                
+                <div class="form-group">
+                    <input type="password" class="form-input" placeholder="Confirm Password" required>
+                </div>
+                
+                <div class="checkbox-group">
+                    <input type="checkbox" id="terms" class="checkbox" required>
+                    <label for="terms">I agree to the <a href="#" class="login-link">Terms of Service</a> and <a href="#" class="login-link">Privacy Policy</a></label>
+                </div>
+                
+                <button type="submit" class="signup-btn">Create Account</button>
+            </form>
+            
+            <div class="divider">
+                <span>or continue with</span>
+            </div>
+            
+            <div class="social-buttons">
+                <button class="social-btn" onclick="signupWithGoogle()">
+                    <span>📧</span> Google
+                </button>
+                <button class="social-btn" onclick="signupWithApple()">
+                    <span>🍎</span> Apple
+                </button>
+            </div>
+            
+            <div class="login-link-container">
+                Already have an account? <a href="#" class="login-link">Sign In</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let isDarkTheme = true;
+        
+        function toggleTheme() {
+            const screen = document.getElementById('signupScreen');
+            const button = document.querySelector('.theme-toggle');
+            
+            if (isDarkTheme) {
+                screen.className = 'signup-screen light-theme';
+                button.innerHTML = '🌞 Switch Theme';
+                isDarkTheme = false;
+            } else {
+                screen.className = 'signup-screen dark-theme';
+                button.innerHTML = '🌙 Switch Theme';
+                isDarkTheme = true;
+            }
+        }
+        
+        function handleSignup(event) {
+            event.preventDefault();
+            // Add your signup logic here
+            alert('Account created successfully! Welcome to MindBoost! 🎉');
+        }
+        
+        function signupWithGoogle() {
+            // Add Google signup logic here
+            alert('Signing up with Google...');
+        }
+        
+        function signupWithApple() {
+            // Add Apple signup logic here
+            alert('Signing up with Apple...');
+        }
+    </script>
+</body>
+</html>
